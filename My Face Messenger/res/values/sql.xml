@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string
+        name="sql_CREATE_icons">
+CREATE TABLE "icons" (
+	"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	"contact" TEXT NOT NULL,
+	"emotion" TEXT NOT NULL,
+	"file" TEXT NOT NULL,
+	"updated" INTEGER NOT NULL
+)
+    </string>
+    <string
+        name="sql_DROP">
+DROP TABLE IF EXISTS "%s"
+    </string>
+
+</resources>
