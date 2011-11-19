@@ -24,13 +24,33 @@
         android:theme="@android:style/Theme.NoTitleBar">
         <activity
             android:label="@string/app_name"
-            android:name=".DashboardActivity" >
+            android:name=".activity.DashboardActivity" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:label="Face Manager"
+            android:name=".activity.FaceIconManagerActivity"/>
+
+        <receiver android:name=".receiver.MessageReceiver" >
+            <intent-filter android:priority="2147483647" >
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+            <intent-filter android:priority="2147483647" >
+                <action android:name="android.provider.Telephony.SMS_REJECTED" />
+            </intent-filter>
+            <intent-filter android:priority="2147483647" >
+                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
+                <data android:mimeType="application/vnd.wap.mms-message" />
+            </intent-filter>
+            <intent-filter android:priority="2147483647" >
+                <action android:name="android.intent.action.DATA_SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".service.MessageReceiverService" />
     </application>
 
 </manifest>
