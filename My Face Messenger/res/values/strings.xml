@@ -3,5 +3,50 @@
 
     <string name="hello">Hello World, DashboardActivity!</string>
     <string name="app_name">My Face Messenger</string>
+    <string-array
+        name="image_source">
+        <item>Capture</item>
+        <item>Choose</item>
+    </string-array>
+    <string-array
+        name="emoticons">
+        <item>:-)</item>
+        <item>;-)</item>
+        <item>:-(</item>
+        <item>:-P</item>
+        <item>=-O</item>
+        <item>:0</item>
+        <item>:-*</item>
+        <item>B-)</item>
+        <item>:-$</item>
+        <item>:-[</item>
+        <item>:-!</item>
+        <item>O:-)</item>
+        <item>:-\</item>
+        <item>:-D</item>
+        <item>:\'(</item>
+        <item>:-X</item>
+        <item>o_O</item>
+    </string-array>
+    <string-array
+        name="emoticon_names">
+        <item>happy</item>
+        <item>winking</item>
+        <item>sad</item>
+        <item>tongue_sticking_out</item>
+        <item>surprised</item>
+        <item>yelling</item>
+        <item>kissing</item>
+        <item>cool</item>
+        <item>money_mouth</item>
+        <item>embarrassed</item>
+        <item>foot_in_mouth</item>
+        <item>angel</item>
+        <item>undecided</item>
+        <item>laughing</item>
+        <item>crying</item>
+        <item>lips_are_sealed</item>
+        <item>confused</item>
+    </string-array>
 
 </resources>
