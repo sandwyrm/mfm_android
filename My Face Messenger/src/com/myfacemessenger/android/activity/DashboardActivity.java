@@ -8,6 +8,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.myfacemessenger.android.R;
+import com.myfacemessenger.android.service.IconUploadService;
 
 public class DashboardActivity extends Activity
 {

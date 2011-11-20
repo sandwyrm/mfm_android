@@ -1,6 +1,7 @@
 package com.myfacemessenger.android.activity;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +33,16 @@ import android.widget.Toast;
 
 import com.myfacemessenger.android.MFMessenger;
 import com.myfacemessenger.android.R;
+import com.myfacemessenger.android.service.IconUploadService;
 
 public class FaceIconManagerActivity extends Activity
 {
 	private static final int	DIALOG_IMAGE_OPTIONS	= 100;
-
 	private static final int	PICK_FROM_CAMERA		= 1;
 	private static final int	CROP_FROM_CAMERA		= 2;
 	private static final int	PICK_FROM_FILE			= 3;
+
+	private static final String	ICON_DIRECTORY			= "MyFaceMessenger";
 
 	private String[]			emoticons;
 	private String[]			emoticon_names;
@@ -88,7 +91,7 @@ public class FaceIconManagerActivity extends Activity
 			switch( which ) {
 				case 0:
 					intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-					captureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_face_icon_" + String.valueOf(System.currentTimeMillis()) + ".jpg"));
+					captureUri = Uri.fromFile(getEmoticonFile(currentEmote));
 					intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, captureUri);
 					try {
 						intent.putExtra("return-data", true);
@@ -122,13 +125,22 @@ public class FaceIconManagerActivity extends Activity
 				case CROP_FROM_CAMERA:
 					Bundle extras = data.getExtras();
 					if( extras != null ) {
-						Bitmap photo = extras.getParcelable("data");
+						Bitmap temp = extras.getParcelable("data");
+						int height = 100; //(temp.getHeight() / temp.getWidth()) * 48;
+						int width = 100; //(temp.getWidth() / temp.getHeight()) * 48;
+						Bitmap photo = Bitmap.createScaledBitmap(temp, width, height, true);
 						MFMessenger.log("Acquired image data: "+photo.toString());
+						try {
+							FileOutputStream out = new FileOutputStream(new File(captureUri.getPath()));
+							photo.compress(Bitmap.CompressFormat.JPEG, 90, out);
+						} catch( Exception e ) {
+							e.printStackTrace();
+						}
 					}
-					File f = new File(captureUri.getPath());
-					if( f.exists() ) {
-						f.delete();
-					}
+					Intent intent = new Intent(this, IconUploadService.class);
+					intent.putExtra("file", captureUri.getPath());
+					startService(intent);
+					adapter.notifyDataSetChanged();
 					break;
 				default:
 					MFMessenger.log("Unplanned result");
@@ -141,6 +153,15 @@ public class FaceIconManagerActivity extends Activity
 		String emote = "";
 		if( position < emoticons.length ) {
 			emote = emoticons[position];
+		}
+		return emote;
+	}
+
+	private String getEmoticonName(int position)
+	{
+		String emote = "";
+		if( position < emoticon_names.length ) {
+			emote = emoticon_names[position];
 		}
 		return emote;
 	}
@@ -206,6 +227,20 @@ public class FaceIconManagerActivity extends Activity
 		}
 	}
 
+	private File getIconDirectory()
+	{
+		File targetDir = new File(Environment.getExternalStorageDirectory(), ICON_DIRECTORY);
+		if( !targetDir.exists() ) {
+			targetDir.mkdirs();
+		}
+		return targetDir;
+	}
+
+	private File getEmoticonFile(String emotion)
+	{
+		return new File(getIconDirectory(), emotion + ".jpg");
+	}
+
 	private class FaceIconAdapter extends ArrayAdapter<String>
 	{
 		public FaceIconAdapter(Context context)
@@ -227,10 +262,17 @@ public class FaceIconManagerActivity extends Activity
 				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = inflater.inflate(R.layout.face_icon_item, parent, false);
 			}
+			String emotion = getEmoticonName(position);
+			File icon = getEmoticonFile(emotion);
+			if( icon.exists() ) {
+				Uri uri = Uri.parse(icon.toURI().toString());
+				((ImageView) v.findViewById(R.id.image))
+					.setImageURI(uri);
+			}
 			((Button) v.findViewById(R.id.bttn_setImage))
 				.setText(getEmoticon(position));
 			((Button) v.findViewById(R.id.bttn_setImage))
-				.setTag(getEmoticon(position));
+				.setTag(emotion);
 			((Button) v.findViewById(R.id.bttn_setImage))
 				.setOnClickListener(new OnClickListener()
 			{
@@ -242,7 +284,6 @@ public class FaceIconManagerActivity extends Activity
 				}
 			});
 			return v;
-//			return super.getView(position, convertView, parent);
 		}
 	}
 
@@ -253,32 +294,29 @@ public class FaceIconManagerActivity extends Activity
 		public Intent appIntent;
 	}
 
-	public class CropOptionAdapter extends ArrayAdapter<CropOption> {
-		private ArrayList<CropOption> mOptions;
-		private LayoutInflater mInflater;
+	public class CropOptionAdapter extends ArrayAdapter<CropOption>
+	{
+		private ArrayList<CropOption>	mOptions;
+		private LayoutInflater			mInflater;
 
-		public CropOptionAdapter(Context context, ArrayList<CropOption> options) {
+		public CropOptionAdapter(Context context, ArrayList<CropOption> options)
+		{
 			super(context, R.layout.crop_selector, options);
-
-			mOptions 	= options;
-
-			mInflater	= LayoutInflater.from(context);
+			mOptions = options;
+			mInflater = LayoutInflater.from(context);
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup group) {
+		public View getView(int position, View convertView, ViewGroup group)
+		{
 			if (convertView == null)
 				convertView = mInflater.inflate(R.layout.crop_selector, null);
-
 			CropOption item = mOptions.get(position);
-
 			if (item != null) {
 				((ImageView) convertView.findViewById(R.id.iv_icon)).setImageDrawable(item.icon);
 				((TextView) convertView.findViewById(R.id.tv_name)).setText(item.title);
-
 				return convertView;
 			}
-
 			return null;
 		}
 	}
