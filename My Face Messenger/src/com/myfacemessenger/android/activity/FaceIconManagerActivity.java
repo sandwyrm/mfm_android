@@ -1,14 +1,20 @@
 package com.myfacemessenger.android.activity;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +26,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.myfacemessenger.android.MFMessenger;
 import com.myfacemessenger.android.R;
@@ -28,14 +37,16 @@ public class FaceIconManagerActivity extends Activity
 {
 	private static final int	DIALOG_IMAGE_OPTIONS	= 100;
 
-	private static final int	REQUEST_CODE_CAPTURE	= 100;
-	private static final int	REQUEST_CODE_SELECT		= 101;
+	private static final int	PICK_FROM_CAMERA		= 1;
+	private static final int	CROP_FROM_CAMERA		= 2;
+	private static final int	PICK_FROM_FILE			= 3;
 
 	private String[]			emoticons;
 	private String[]			emoticon_names;
 	private GridView			grid;
 	private FaceIconAdapter		adapter;
 	private String				currentEmote;
+	private Uri					captureUri;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -77,11 +88,11 @@ public class FaceIconManagerActivity extends Activity
 			switch( which ) {
 				case 0:
 					intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-					Uri captureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_face_icon_" + String.valueOf(System.currentTimeMillis()) + ".jpg"));
+					captureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_face_icon_" + String.valueOf(System.currentTimeMillis()) + ".jpg"));
 					intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, captureUri);
 					try {
 						intent.putExtra("return-data", true);
-						startActivityForResult(intent, REQUEST_CODE_CAPTURE);
+						startActivityForResult(intent, PICK_FROM_CAMERA);
 					} catch (ActivityNotFoundException e) {
 						e.printStackTrace();
 			        }
@@ -90,7 +101,7 @@ public class FaceIconManagerActivity extends Activity
 					intent = new Intent();
 					intent.setType("image/*");
 					intent.setAction(Intent.ACTION_GET_CONTENT);
-					startActivityForResult(Intent.createChooser(intent, "Complete action using"), REQUEST_CODE_SELECT);
+					startActivityForResult(Intent.createChooser(intent, "Complete action using"), PICK_FROM_FILE);
 					break;
 			}
 		}
@@ -101,8 +112,26 @@ public class FaceIconManagerActivity extends Activity
 	{
 		if( resultCode == RESULT_OK ) {
 			switch( requestCode ) {
+				case PICK_FROM_CAMERA:
+					cropSelection();
+					break;
+				case PICK_FROM_FILE:
+					captureUri = data.getData();
+					cropSelection();
+					break;
+				case CROP_FROM_CAMERA:
+					Bundle extras = data.getExtras();
+					if( extras != null ) {
+						Bitmap photo = extras.getParcelable("data");
+						MFMessenger.log("Acquired image data: "+photo.toString());
+					}
+					File f = new File(captureUri.getPath());
+					if( f.exists() ) {
+						f.delete();
+					}
+					break;
 				default:
-					MFMessenger.log("Result");
+					MFMessenger.log("Unplanned result");
 			}
 		}
 	}
@@ -116,14 +145,66 @@ public class FaceIconManagerActivity extends Activity
 		return emote;
 	}
 
-//	private void addEmoticonButton(String emotion, String text)
-//	{
-//		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		View v = inflater.inflate(R.layout.face_icon_item, null);
-//		((Button) v.findViewById(R.id.bttn_setImage))
-//			.setText(text + " ["+emotion+"]");
-//		grid.addView(v);
-//	}
+	private void cropSelection()
+	{
+		final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setType("image/*");
+		List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
+		int size = list.size();
+		if( size == 0 ) {
+			Toast.makeText(this, "Can not find image crop app", Toast.LENGTH_SHORT).show();
+			return;
+		} else {
+			intent.setData(captureUri);
+			intent.putExtra("outputX", 200);
+			intent.putExtra("outputY", 200);
+			intent.putExtra("aspectX", 1);
+			intent.putExtra("aspectY", 1);
+			intent.putExtra("scale", true);
+			intent.putExtra("return-data", true);
+			if( size == 1 ) {
+				Intent i = new Intent(intent);
+				ResolveInfo res = list.get(0);
+				i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+				startActivityForResult(i, CROP_FROM_CAMERA);
+			} else {
+				for( ResolveInfo res : list ) {
+					final CropOption co = new CropOption();
+					co.title = getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
+					co.icon = getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
+					co.appIntent = new Intent(intent);
+					co.appIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+					cropOptions.add(co);
+				}
+				CropOptionAdapter adapter = new CropOptionAdapter(this, cropOptions);
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder
+					.setTitle("Choose application to crop")
+					.setAdapter(adapter, new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							startActivityForResult(cropOptions.get(which).appIntent, CROP_FROM_CAMERA);
+						}
+					})
+					.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							if( captureUri != null ) {
+								getContentResolver().delete(captureUri, null, null);
+								captureUri = null;
+							}
+						}
+					});
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
+		}
+	}
 
 	private class FaceIconAdapter extends ArrayAdapter<String>
 	{
@@ -162,6 +243,43 @@ public class FaceIconManagerActivity extends Activity
 			});
 			return v;
 //			return super.getView(position, convertView, parent);
+		}
+	}
+
+	private class CropOption
+	{
+		public CharSequence title;
+		public Drawable icon;
+		public Intent appIntent;
+	}
+
+	public class CropOptionAdapter extends ArrayAdapter<CropOption> {
+		private ArrayList<CropOption> mOptions;
+		private LayoutInflater mInflater;
+
+		public CropOptionAdapter(Context context, ArrayList<CropOption> options) {
+			super(context, R.layout.crop_selector, options);
+
+			mOptions 	= options;
+
+			mInflater	= LayoutInflater.from(context);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup group) {
+			if (convertView == null)
+				convertView = mInflater.inflate(R.layout.crop_selector, null);
+
+			CropOption item = mOptions.get(position);
+
+			if (item != null) {
+				((ImageView) convertView.findViewById(R.id.iv_icon)).setImageDrawable(item.icon);
+				((TextView) convertView.findViewById(R.id.tv_name)).setText(item.title);
+
+				return convertView;
+			}
+
+			return null;
 		}
 	}
 }
