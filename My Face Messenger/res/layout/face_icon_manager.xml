@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/faces_background" >
 
     <GridView
         android:id="@+id/iconGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="110dp"
-        android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp"
+        android:columnWidth="54dp"
+        android:horizontalSpacing="4dp"
+        android:verticalSpacing="4dp"
         android:numColumns="3" >
     </GridView>
 

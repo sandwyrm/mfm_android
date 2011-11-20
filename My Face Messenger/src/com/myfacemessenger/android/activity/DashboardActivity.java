@@ -25,12 +25,14 @@ public class DashboardActivity extends Activity
 	protected void onResume()
 	{
 		super.onResume();
-		((Button) findViewById(R.id.getImage))
-			.setOnClickListener(imageSelectionListener);
-		((Button) findViewById(R.id.getThreads))
-			.setOnClickListener(threadListener);
-		((Button) findViewById(R.id.getSettings))
-			.setOnClickListener(settingsListener);
+		Intent intent = new Intent(getBaseContext(), ThreadListActivity.class);
+		startActivity(intent);
+//		((Button) findViewById(R.id.getImage))
+//			.setOnClickListener(imageSelectionListener);
+//		((Button) findViewById(R.id.getThreads))
+//			.setOnClickListener(threadListener);
+//		((Button) findViewById(R.id.getSettings))
+//			.setOnClickListener(settingsListener);
 	}
 
 	private OnClickListener imageSelectionListener =	//

@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -138,7 +139,11 @@ public class FaceIconManagerActivity extends Activity
 						}
 					}
 					Intent intent = new Intent(this, IconUploadService.class);
-					intent.putExtra("file", captureUri.getPath());
+					if( captureUri.getPath().matches(".*external.*") ) {
+						intent.putExtra("file", currentEmote + ".jpg");
+					} else {
+						intent.putExtra("file", captureUri.getPath());
+					}
 					startService(intent);
 					adapter.notifyDataSetChanged();
 					break;
@@ -268,6 +273,9 @@ public class FaceIconManagerActivity extends Activity
 				Uri uri = Uri.parse(icon.toURI().toString());
 				((ImageView) v.findViewById(R.id.image))
 					.setImageURI(uri);
+			} else {
+				((ImageView) v.findViewById(R.id.image))
+					.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_help));
 			}
 			((Button) v.findViewById(R.id.bttn_setImage))
 				.setText(getEmoticon(position));

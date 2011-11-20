@@ -48,8 +48,8 @@
         <receiver android:name=".receiver.MessageReceiver" >
             <intent-filter android:priority="2147483647" >
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-            <intent-filter android:priority="2147483647" >
+            </intent-filter> 
+            <!--<intent-filter android:priority="2147483647" >
                 <action android:name="android.provider.Telephony.SMS_REJECTED" />
             </intent-filter>
             <intent-filter android:priority="2147483647" >
@@ -58,7 +58,7 @@
             </intent-filter>
             <intent-filter android:priority="2147483647" >
                 <action android:name="android.intent.action.DATA_SMS_RECEIVED" />
-            </intent-filter>
+            </intent-filter> -->
         </receiver>
 
         <service android:name=".service.IconUploadService" />
