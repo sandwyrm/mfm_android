@@ -1,7 +1,5 @@
 package com.myfacemessenger.android;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 import android.app.Application;
@@ -10,12 +8,22 @@ import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.myfacemessenger.android.api.APIHandler;
+
 public class MFMessenger extends Application
 {
 	public static final String	PACKAGE			= "com.myfacemessenger.android";
 	public static final String	LOG_TAG			= PACKAGE + ".log";
 	public static final String	ACTION_UPDATE	= PACKAGE + ".UPDATE_ACTION";
 	private String				DEVICE_ID		= MFMessenger.PACKAGE + ".IDENTITY";
+
+	@Override
+	public void onCreate()
+	{
+		super.onCreate();
+		APIHandler api = new APIHandler();
+		api.register(getDevicePhoneId());
+	}
 
 	private String getDevicePhoneId()
 	{
