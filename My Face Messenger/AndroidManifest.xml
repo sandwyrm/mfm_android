@@ -35,6 +35,15 @@
         <activity
             android:label="Face Manager"
             android:name=".activity.FaceIconManagerActivity"/>
+        <activity
+            android:label="Conversations"
+            android:name=".activity.ThreadListActivity"/>
+        <activity
+            android:label="Conversation"
+            android:name=".activity.ThreadActivity"/>
+        <activity
+            android:label="Preferences"
+            android:name=".activity.SettingsActivity"/>
 
         <receiver android:name=".receiver.MessageReceiver" >
             <intent-filter android:priority="2147483647" >

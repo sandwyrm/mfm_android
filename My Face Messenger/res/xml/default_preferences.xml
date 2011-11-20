@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+    	android:title="FTP Settings">
+    	<EditTextPreference
+    		android:defaultValue="http://myface-messenger.heroku.com"
+    		android:title="Host"
+    		android:summary="Default host to upload face icon assets"
+    		android:key="ftp_host"/>
+    	<EditTextPreference
+    		android:defaultValue="mfmessenger"
+    		android:title="Username"
+    		android:summary="Default username to upload face icon assets"
+    		android:key="ftp_username"/>
+    	<EditTextPreference
+    		android:defaultValue="textmyface1!"
+    		android:title="Password"
+    		android:summary="Default password to upload face icon assets"
+    		android:key="ftp_password"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -27,6 +27,10 @@ public class DashboardActivity extends Activity
 		super.onResume();
 		((Button) findViewById(R.id.getImage))
 			.setOnClickListener(imageSelectionListener);
+		((Button) findViewById(R.id.getThreads))
+			.setOnClickListener(threadListener);
+		((Button) findViewById(R.id.getSettings))
+			.setOnClickListener(settingsListener);
 	}
 
 	private OnClickListener imageSelectionListener =	//
@@ -36,6 +40,28 @@ public class DashboardActivity extends Activity
 		public void onClick(View v)
 		{
 			Intent intent = new Intent(getBaseContext(), FaceIconManagerActivity.class);
+			startActivity(intent);
+		}
+	};
+
+	private OnClickListener threadListener =	//
+		new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			Intent intent = new Intent(getBaseContext(), ThreadListActivity.class);
+			startActivity(intent);
+		}
+	};
+
+	private OnClickListener settingsListener =	//
+		new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
 			startActivity(intent);
 		}
 	};

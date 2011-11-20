@@ -12,7 +12,22 @@
     <Button
         android:id="@+id/getImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Test" />
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:text="Faces" />
+
+    <Button
+        android:id="@+id/getThreads"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:text="Threads" />
+
+    <Button
+        android:id="@+id/getSettings"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:text="Settings" />
 
 </LinearLayout>
