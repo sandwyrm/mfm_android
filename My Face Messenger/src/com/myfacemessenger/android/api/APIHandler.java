@@ -2,6 +2,7 @@ package com.myfacemessenger.android.api;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -39,15 +40,19 @@ public class APIHandler
 		client = new DefaultHttpClient(httpParams);
 	}
 
-	public void register(String number)
+	public void register(String number, String email)
 	{
 		JSONObject requestData = new JSONObject();
 		JSONObject requestUser = new JSONObject();
 		try {
 			requestUser.put("mobile_number", number);
+			if( email != null ) {
+				requestUser.put("email", email);
+			}
 			requestData.put("user", requestUser);
-		} catch (JSONException e1) {
-			e1.printStackTrace();
+			MFMessenger.log("Request to be sent: " + requestData.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		HttpPost request = new HttpPost(USERS_URL);
 		try {
@@ -56,8 +61,9 @@ public class APIHandler
 			s.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 			entity = s;
 			request.setEntity(s);
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+			request.addHeader("Content-Type", "application/json");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
 		try {
 			lastResponse = client.execute(request);
@@ -66,6 +72,41 @@ public class APIHandler
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		MFMessenger.log(lastResponse.toString());
+		MFMessenger.log("Response received: " + lastResponse.toString());
+	}
+
+	public void update(String number, String email)
+	{
+		JSONObject requestData = new JSONObject();
+		JSONObject requestUser = new JSONObject();
+		try {
+			requestUser.put("mobile_number", number);
+			if( email != null ) {
+				requestUser.put("email", email);
+			}
+			requestData.put("user", requestUser);
+			MFMessenger.log("Request to be sent: " + requestData.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		HttpPost request = new HttpPost(FACE_URL + "/" + URLEncoder.encode(number));
+		try {
+			HttpEntity entity;
+			StringEntity s = new StringEntity(requestData.toString());
+			s.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+			entity = s;
+			request.setEntity(s);
+			request.addHeader("Content-Type", "application/json");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		try {
+			lastResponse = client.execute(request);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		MFMessenger.log("Response received: " + lastResponse.toString());
 	}
 }

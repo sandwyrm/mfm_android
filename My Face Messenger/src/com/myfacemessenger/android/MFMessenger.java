@@ -15,14 +15,22 @@ public class MFMessenger extends Application
 	public static final String	PACKAGE			= "com.myfacemessenger.android";
 	public static final String	LOG_TAG			= PACKAGE + ".log";
 	public static final String	ACTION_UPDATE	= PACKAGE + ".UPDATE_ACTION";
-	private String				DEVICE_ID		= MFMessenger.PACKAGE + ".IDENTITY";
+	private String				DEVICE_ID		= PACKAGE + ".IDENTITY";
+	private String				FIRST_RUN		= PACKAGE + ".FIRST_RUN";
 
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
 		APIHandler api = new APIHandler();
-		api.register(getDevicePhoneId());
+		SharedPreferences prefs = getSharedPreferences(MFMessenger.PACKAGE, 0);
+		boolean firstRun = prefs.getBoolean(FIRST_RUN, true);
+		if( firstRun ) {
+			api.register(getDevicePhoneId(), null);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putBoolean(FIRST_RUN, false);
+			editor.commit();
+		}
 	}
 
 	private String getDevicePhoneId()
@@ -47,6 +55,7 @@ public class MFMessenger extends Application
 		editor.commit();
 		return id;
 	}
+
 	public static void log(String message)
 	{
 		log( Log.DEBUG, message );
