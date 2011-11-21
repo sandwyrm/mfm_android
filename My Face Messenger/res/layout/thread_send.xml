@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="5dp"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:background="#FFFFFF" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/send_background"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="7.5dp"
+        android:paddingBottom="7.5dp" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="12dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/messageSender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ardie Yorgans"
+                android:textSize="12dp"
+                android:textColor="#cccccc" />
+
+            <TextView
+                android:id="@+id/messageBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="Lorem ipsum dolor sit amet, consecteur adipiso eros elementum commodo.  Donec quis nunc la sparta!"
+                android:textColor="#ffffff"/>
+
+            <TextView
+                android:id="@+id/messageTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SENT 4:20 PM, NOV 12"
+                android:textSize="12dp"
+                android:textColor="#cccccc" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/messageIcon"
+            android:layout_width="54dp"
+            android:layout_height="75dp"
+            android:src="@android:drawable/sym_action_chat" />
+        
+    </LinearLayout>
+
+</LinearLayout>

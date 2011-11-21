@@ -50,29 +50,30 @@ public class MessageReceiverService extends Service
 	public void onCreate()
 	{
 		MFMessenger.log("Service created");
-		HandlerThread thread = new HandlerThread(MFMessenger.PACKAGE, Process.THREAD_PRIORITY_BACKGROUND);
-		thread.start();
-		context = getApplicationContext();
-		looper = thread.getLooper();
-		handler = new ServiceHandler(looper);
+//		HandlerThread thread = new HandlerThread(MFMessenger.PACKAGE, Process.THREAD_PRIORITY_BACKGROUND);
+//		thread.start();
+		sendBroadcast(new Intent(MFMessenger.ACTION_UPDATE));
+//		context = getApplicationContext();
+//		looper = thread.getLooper();
+//		handler = new ServiceHandler(looper);
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId)
 	{
 		MFMessenger.log("Service started");
-		serviceId = startId;
-		Message message = handler.obtainMessage();
-		message.arg1 = startId;
-		message.obj = intent;
-		handler.sendMessage(message);
+//		serviceId = startId;
+//		Message message = handler.obtainMessage();
+//		message.arg1 = startId;
+//		message.obj = intent;
+//		handler.sendMessage(message);
 	}
 
 	@Override
 	public void onDestroy()
 	{
 		MFMessenger.log("Service destroyed");
-		looper.quit();
+//		looper.quit();
 		super.onDestroy();
 	}
 

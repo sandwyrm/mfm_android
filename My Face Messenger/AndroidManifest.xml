@@ -36,6 +36,9 @@
             android:label="Face Manager"
             android:name=".activity.FaceIconManagerActivity"/>
         <activity
+            android:label="Face Selection"
+            android:name=".activity.FaceSelectionActivity"/>
+        <activity
             android:label="Conversations"
             android:name=".activity.ThreadListActivity"/>
         <activity

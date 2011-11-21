@@ -51,7 +51,6 @@ public class IconUploadService extends Service
 					input = new FileInputStream(fileName);
 					client.storeFile(rawFileName, input);
 					input.close();
-//					client.doCommand("mkdir TEST", "");
 				}
 			}
 			client.disconnect();

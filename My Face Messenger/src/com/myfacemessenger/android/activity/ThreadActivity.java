@@ -1,24 +1,29 @@
 package com.myfacemessenger.android.activity;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.telephony.gsm.SmsManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +39,7 @@ public class ThreadActivity extends ListActivity
 	private String address;
 	private String contactName;
 	private SmsThreadAdapter adapter;
+	private UpdateReceiver receiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -42,6 +48,8 @@ public class ThreadActivity extends ListActivity
 		setContentView(R.layout.thread);
 		thread_id = getIntent().getStringExtra("thread_id");
 		address = getIntent().getStringExtra("address");
+		((Button) findViewById(R.id.sendButton))
+			.setOnClickListener(sendListener);
 		Bitmap photo = MFMessenger.getContactPhoto(getContentResolver(), address);
 		if( photo != null ) {
 			((ImageView) findViewById(R.id.threadIcon))
@@ -58,7 +66,22 @@ public class ThreadActivity extends ListActivity
         	.setStackFromBottom(true);
         getListView()
         	.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+	}
 
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		refreshList();
+		receiver = new UpdateReceiver();
+		registerReceiver(receiver, new IntentFilter(MFMessenger.ACTION_UPDATE));
+	}
+
+	@Override
+	protected void onPause()
+	{
+		unregisterReceiver(receiver);
+		super.onPause();
 	}
 
 	@Override
@@ -86,6 +109,31 @@ public class ThreadActivity extends ListActivity
 				return super.onOptionsItemSelected(item);
 		}
 	}
+
+	private void sendMessage()
+	{
+		EditText input = (EditText) findViewById(R.id.sendText);
+		SmsManager manager = SmsManager.getDefault();
+		manager.sendTextMessage(address, null, input.getText().toString(), null, null);
+		ContentValues cv = new ContentValues();
+		cv.put("address", address);
+		cv.put("body", input.getText().toString());
+		cv.put("thread_id", thread_id);
+		cv.put("type", 2);
+		getContentResolver().insert(Sms.CONTENT_URI, cv);
+		input.setText("");
+		refreshList();
+	}
+
+	private OnClickListener sendListener =	//
+		new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			sendMessage();
+		}
+	};
 
 	private class SmsThreadAdapter extends CursorAdapter
 	{
@@ -123,14 +171,11 @@ public class ThreadActivity extends ListActivity
 		@Override
 		public int getItemViewType(int position)
 		{
-			MFMessenger.log("Pulling message type for message #"+position);
 			Cursor c = getCursor();
 			if( c.moveToPosition(position) ) {
 				int type = c.getInt(c.getColumnIndex("type"));
-				MFMessenger.log("Type: "+type);
 				return type-1;
 			} else {
-				MFMessenger.log("Index did not exist");
 				return 1;
 			}
 		}
@@ -159,20 +204,26 @@ public class ThreadActivity extends ListActivity
 			int type = cursor.getInt(cursor.getColumnIndex("type"));
 			ImageView icon = (ImageView) view.findViewById(R.id.messageIcon);
 			String emote = MFMessenger.identifyEmote(body);
+			MFMessenger.log("I think you're "+emote);
 			Bitmap photo = null;
 			if( type == 2 ) {
 				name = "Me";
-				try {
-					photo = BitmapFactory.decodeStream(new FileInputStream(MFMessenger.getEmoticonFile(emote)));
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
+				photo = BitmapFactory.decodeFile(MFMessenger.getEmoticonFile(emote).getPath());
+				MFMessenger.log("My Photo: "+photo);
 			} else {
 				name = contactName;
 				photo = MFMessenger.getEmoteIcon(address, emote);
+				MFMessenger.log("Their Photo: "+photo);
 			}
 			if( photo == null ) {
-				icon.setImageDrawable(getResources().getDrawable(android.R.drawable.sym_action_chat));
+				photo = BitmapFactory.decodeFile(MFMessenger.getEmoticonFile(emote).getPath());
+				MFMessenger.log("My Backup Photo: "+photo);
+				if( photo == null ) {
+					icon.setImageDrawable(getResources().getDrawable(android.R.drawable.sym_action_chat));
+					MFMessenger.log("Default Photo");
+				}
+			} else {
+				icon.setImageBitmap(photo);
 			}
 			view.setTag(thread_id);
 			((TextView) view.findViewById(R.id.messageSender))
@@ -181,6 +232,28 @@ public class ThreadActivity extends ListActivity
 				.setText(body);
 			((TextView) view.findViewById(R.id.messageTime))
 				.setText("SENT "+dateFormat.format(new Date(date)));
+		}
+	}
+
+	private void refreshList()
+	{
+		Cursor c = getContentResolver().query(Sms.CONTENT_URI,
+				null, "thread_id = ?", new String[] {thread_id}, "date ASC");
+		adapter = new SmsThreadAdapter(this, c);
+		setListAdapter(adapter);
+		getListView()
+        	.setStackFromBottom(true);
+        getListView()
+        	.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+	}
+
+	private class UpdateReceiver extends BroadcastReceiver
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			MFMessenger.log("Message update broadcast received!");
+			refreshList();
 		}
 	}
 }

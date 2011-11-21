@@ -4,8 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -29,16 +31,29 @@ import custom.android.provider.Telephony.Sms;
 public class ThreadListActivity extends ListActivity
 {
 	private SmsInboxAdapter adapter;
+	private UpdateReceiver receiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.thread_list);
-		Cursor c = getContentResolver().query(Sms.CONTENT_URI, null, "type = ?) GROUP BY (address", new String[] {"1"}, "date DESC");
-		adapter = new SmsInboxAdapter(this, c);
-		setListAdapter(adapter);
-		getListView().setOnItemClickListener(threadClickListener);
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		refreshList();
+		receiver = new UpdateReceiver();
+		registerReceiver(receiver, new IntentFilter(MFMessenger.ACTION_UPDATE));
+	}
+
+	@Override
+	protected void onPause()
+	{
+		unregisterReceiver(receiver);
+		super.onPause();
 	}
 
 	@Override
@@ -124,6 +139,24 @@ public class ThreadListActivity extends ListActivity
 				((ImageView) view.findViewById(R.id.threadIcon))
 					.setImageDrawable(getResources().getDrawable(android.R.drawable.sym_action_chat));
 			}
+		}
+	}
+
+	private void refreshList()
+	{
+		Cursor c = getContentResolver().query(Sms.CONTENT_URI, null, "type = ?) GROUP BY (address", new String[] {"1"}, "date DESC");
+		adapter = new SmsInboxAdapter(this, c);
+		setListAdapter(adapter);
+		getListView().setOnItemClickListener(threadClickListener);
+	}
+
+	private class UpdateReceiver extends BroadcastReceiver
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			MFMessenger.log("Message update broadcast received!");
+			refreshList();
 		}
 	}
 }

@@ -29,6 +29,7 @@ import com.myfacemessenger.android.api.APIHandler;
 public class MFMessenger extends Application
 {
 	public static final String	PACKAGE			= "com.myfacemessenger.android";
+	public static final String	UPDATE_ACTION	= PACKAGE + ".ACTION_NEW_MESSAGE";
 	public static final String	LOG_TAG			= PACKAGE + ".log";
 	public static final String	ACTION_UPDATE	= PACKAGE + ".UPDATE_ACTION";
 	private String				DEVICE_ID		= PACKAGE + ".IDENTITY";
