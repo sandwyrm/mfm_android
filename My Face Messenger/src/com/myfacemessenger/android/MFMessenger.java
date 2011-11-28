@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -28,34 +31,27 @@ import com.myfacemessenger.android.api.APIHandler;
 
 public class MFMessenger extends Application
 {
-	public static final String	PACKAGE			= "com.myfacemessenger.android";
-	public static final String	UPDATE_ACTION	= PACKAGE + ".ACTION_NEW_MESSAGE";
-	public static final String	LOG_TAG			= PACKAGE + ".log";
-	public static final String	ACTION_UPDATE	= PACKAGE + ".UPDATE_ACTION";
-	private String				DEVICE_ID		= PACKAGE + ".IDENTITY";
-	private String				FIRST_RUN		= PACKAGE + ".FIRST_RUN";
+	public static final String		PACKAGE			= "com.myfacemessenger.android";
+	public static final String		UPDATE_ACTION	= PACKAGE + ".ACTION_NEW_MESSAGE";
+	public static final String		LOG_TAG			= PACKAGE + ".log";
+	public static final String		ACTION_UPDATE	= PACKAGE + ".UPDATE_ACTION";
+	public static SharedPreferences	preferences		= null;
 
-	private static final String	ICON_DIRECTORY			= "MyFaceMessenger";
+	private String					PREF_DEVICE_ID	= PACKAGE + ".IDENTITY";
+	private String					PREF_FIRST_RUN	= PACKAGE + ".FIRST_RUN";
+
+	private static final String		ICON_DIRECTORY	= "MyFaceMessenger";
 
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
-		APIHandler api = new APIHandler();
-		SharedPreferences prefs = getSharedPreferences(MFMessenger.PACKAGE, 0);
-		boolean firstRun = prefs.getBoolean(FIRST_RUN, true);
-		if( firstRun ) {
-			api.register(getDevicePhoneId(), null);
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putBoolean(FIRST_RUN, false);
-			editor.commit();
-		}
+		preferences = getSharedPreferences(getApplicationContext().getPackageName() + "_preferences", Context.MODE_PRIVATE);
 	}
 
 	private String getDevicePhoneId()
 	{
-		SharedPreferences prefs = getSharedPreferences(MFMessenger.PACKAGE, 0);
-		String id = prefs.getString(DEVICE_ID, null);
+		String id = preferences.getString(PREF_DEVICE_ID, null);
 		if( id != null ) {
 			return id;
 		}
@@ -69,8 +65,8 @@ public class MFMessenger extends Application
 		if( id == null ) {
 			id = UUID.randomUUID().toString();
 		}
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(DEVICE_ID, id);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putString(PREF_DEVICE_ID, id);
 		editor.commit();
 		return id;
 	}
@@ -158,11 +154,50 @@ public class MFMessenger extends Application
 	public static String identifyEmote(String emote)
 	{
 		if( emote != null ) {
-			Pattern p = Pattern.compile("((?::|;|=)(?:-)?(?:\\)|D|P))");
+			Pattern p = Pattern.compile(
+				"(?:" +
+				":[-o]?\\)" +
+				"|" +
+				";[-o]?\\)" +
+				"|" +
+				":[-o]?\\(" +
+				"|" +
+				":[-o]?P" +
+				"|" +
+				"=[-o]?[0O]" +
+				"|" +
+				":[-o]?[0O]" +
+				"|" +
+				":[-o]?\\*" +
+				"|" +
+				"B[-o]?\\)" +
+				"|" +
+				":[-o]\\$" +
+				"|" +
+				":[-o]?\\[" +
+				"|" +
+				":[-o]?\\!" +
+				"|" +
+				"[0O]:[-o]?\\)" +
+				"|" +
+				":[-o]?\\\\" +
+				"|" +
+				":[-o]?D" +
+				"|" +
+				":\'[-o]?\\(" +
+				"|" +
+				":[-o]?X" +
+				"|" +
+				"o_O" +
+				")"
+			);
 			Matcher m = p.matcher(emote);
 			if( m.find() ) {
 				MatchResult mr = m.toMatchResult();
-				emote = mr.group(1);
+				String output = "";
+				output = mr.group(0);
+				return output;
+//				emote = mr.group(0);
 			} else {
 				emote = ":-)";
 			}
@@ -219,6 +254,19 @@ public class MFMessenger extends Application
 			}
 		}
 		return "happy";
+	}
+
+	public static String hash(String source)
+	{
+		String hash = null;
+		try {
+			MessageDigest digest = MessageDigest.getInstance("MD5");
+			digest.update(source.getBytes(), 0, source.length());
+			hash = new BigInteger(1, digest.digest()).toString();
+		} catch( NoSuchAlgorithmException e ) {
+			e.printStackTrace();
+		}
+		return hash;
 	}
 
 	public static void log(String message)
