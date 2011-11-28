@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +41,8 @@ public class ThreadListActivity extends ListActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.thread_list);
+		((EditText) findViewById(R.id.testInput))
+			.addTextChangedListener(testInputWatcher);
 	}
 
 	@Override
@@ -81,6 +86,32 @@ public class ThreadListActivity extends ListActivity
 				return super.onOptionsItemSelected(item);
 		}
 	}
+
+	private void updateTestResult(String result)
+	{
+		((TextView) findViewById(R.id.testResult))
+			.setText(result);
+	}
+
+	private TextWatcher testInputWatcher =	//
+		new TextWatcher()
+	{
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count)
+		{
+		}
+		
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after)
+		{
+		}
+		
+		@Override
+		public void afterTextChanged(Editable s)
+		{
+			updateTestResult(MFMessenger.identifyEmote(s.toString()));
+		}
+	};
 
 	private OnItemClickListener threadClickListener =	//
 		new OnItemClickListener()
