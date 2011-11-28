@@ -32,9 +32,9 @@ public class APIHandler
 	public static final String	FACE_URL		= API_URL + "/numbers";
 	// Connection Defaults
 	public static final int		CLIENT_TIMEOUT	= 60000;
+	public static HttpResponse	lastResponse	= null;
 
 	private HttpClient			client			= null;
-	private HttpResponse		lastResponse	= null;
 
 	public APIHandler()
 	{
@@ -122,8 +122,9 @@ public class APIHandler
 		return responseData;
 	}
 
-	public void registerUser(String number, String email)
+	public static void registerUser(String number, String email)
 	{
+		APIHandler api = new APIHandler();
 		JSONObject requestData = new JSONObject();
 		JSONObject requestUser = new JSONObject();
 		try {
@@ -136,12 +137,13 @@ public class APIHandler
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		lastResponse = post( USERS_URL, requestData.toString() );
+		lastResponse = api.post( USERS_URL, requestData.toString() );
 		MFMessenger.log("Response received: " + lastResponse.toString());
 	}
 
-	public void updateUser(String number, String email)
+	public static void updateUser(String number, String email)
 	{
+		APIHandler api = new APIHandler();
 		JSONObject requestData = new JSONObject();
 		JSONObject requestUser = new JSONObject();
 		try {
@@ -154,29 +156,33 @@ public class APIHandler
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		lastResponse = put( FACE_URL + "/" + number, requestData.toString() );
+		lastResponse = api.put( FACE_URL + "/" + number, requestData.toString() );
 		MFMessenger.log("Response received: " + lastResponse.toString());
 	}
 
-	public void deleteUser(String number)
+	public static void deleteUser(String number)
 	{
-		lastResponse = delete( FACE_URL + "/" + number );
+		APIHandler api = new APIHandler();
+		lastResponse = api.delete( FACE_URL + "/" + number );
 	}
 
-	public JSONObject userInformation(String number)
+	public static JSONObject userInformation(String number)
 	{
-		lastResponse = get( FACE_URL + "/" + number );
-		return processResponse(lastResponse);
+		APIHandler api = new APIHandler();
+		lastResponse = api.get( FACE_URL + "/" + number );
+		return api.processResponse(lastResponse);
 	}
 
-	public JSONObject getFace(String number, String emote)
+	public static JSONObject getFace(String number, String emote)
 	{
-		lastResponse = get( FACE_URL + "/" + number + "/faces/" + emote );
-		return processResponse(lastResponse);
+		APIHandler api = new APIHandler();
+		lastResponse = api.get( FACE_URL + "/" + number + "/faces/" + emote );
+		return api.processResponse(lastResponse);
 	}
 
-	public void updateFace(String number, String email)
+	public static void updateFace(String number, String email)
 	{
+		APIHandler api = new APIHandler();
 		JSONObject requestData = new JSONObject();
 		JSONObject requestUser = new JSONObject();
 		try {
@@ -189,7 +195,7 @@ public class APIHandler
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		lastResponse = put(FACE_URL + "/" + number, requestData.toString());
+		lastResponse = api.put(FACE_URL + "/" + number, requestData.toString());
 		MFMessenger.log("Response received: " + lastResponse.toString());
 	}
 }
