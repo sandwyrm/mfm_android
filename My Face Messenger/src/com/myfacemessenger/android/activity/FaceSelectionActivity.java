@@ -49,7 +49,10 @@ public class FaceSelectionActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.face_selection);
 		currentEmote = getIntent().getStringExtra("emote");
+		((TextView) findViewById(R.id.faceSelectionText))
+		.setText("Select your "+currentEmote+" face!");
 		emoticon_names = getResources().getStringArray(
 			getResources().getIdentifier("emoticon_names", "array", MFMessenger.PACKAGE)
 		);

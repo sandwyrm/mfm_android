@@ -1,26 +1,14 @@
 package com.myfacemessenger.android.activity;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,13 +16,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.myfacemessenger.android.MFMessenger;
 import com.myfacemessenger.android.R;
-import com.myfacemessenger.android.service.IconUploadService;
 
 public class FaceIconManagerActivity extends Activity
 {
@@ -124,18 +111,20 @@ public class FaceIconManagerActivity extends Activity
 			String emotion = getEmoticonName(position);
 			File icon = getEmoticonFile(emotion);
 			if( icon.exists() ) {
-				Uri uri = Uri.parse(icon.toURI().toString());
-				((ImageView) v.findViewById(R.id.image))
-					.setImageURI(uri);
+//				Uri uri = Uri.parse(icon.toURI().toString());
+				((Button) v.findViewById(R.id.image))
+					.setCompoundDrawablesWithIntrinsicBounds(null, Drawable.createFromPath(icon.getPath()), null, null);
+//					.setImageURI(uri);
 			} else {
-				((ImageView) v.findViewById(R.id.image))
-					.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_help));
+				((Button) v.findViewById(R.id.image))
+					.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(android.R.drawable.ic_menu_help), null, null);
+//					.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_help));
 			}
-			((Button) v.findViewById(R.id.bttn_setImage))
+			((Button) v.findViewById(R.id.image))
 				.setText(getEmoticon(position));
-			((Button) v.findViewById(R.id.bttn_setImage))
+			((Button) v.findViewById(R.id.image))
 				.setTag(emotion);
-			((Button) v.findViewById(R.id.bttn_setImage))
+			((Button) v.findViewById(R.id.image))
 				.setOnClickListener(new OnClickListener()
 			{
 				@Override
