@@ -41,8 +41,8 @@ public class ThreadListActivity extends ListActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.thread_list);
-		((EditText) findViewById(R.id.testInput))
-			.addTextChangedListener(testInputWatcher);
+//		((EditText) findViewById(R.id.testInput))
+//			.addTextChangedListener(testInputWatcher);
 	}
 
 	@Override
@@ -89,8 +89,8 @@ public class ThreadListActivity extends ListActivity
 
 	private void updateTestResult(String result)
 	{
-		((TextView) findViewById(R.id.testResult))
-			.setText(result);
+//		((TextView) findViewById(R.id.testResult))
+//			.setText(result);
 	}
 
 	private TextWatcher testInputWatcher =	//

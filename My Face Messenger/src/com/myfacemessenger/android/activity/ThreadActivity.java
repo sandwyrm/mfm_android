@@ -13,7 +13,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.telephony.gsm.SmsManager;
+import android.telephony.SmsManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
