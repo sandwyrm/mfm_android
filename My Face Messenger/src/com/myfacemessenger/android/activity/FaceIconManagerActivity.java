@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -14,9 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -112,20 +109,19 @@ public class FaceIconManagerActivity extends Activity
 			File icon = getEmoticonFile(emotion);
 			if( icon.exists() ) {
 //				Uri uri = Uri.parse(icon.toURI().toString());
-				((Button) v.findViewById(R.id.image))
-					.setCompoundDrawablesWithIntrinsicBounds(null, Drawable.createFromPath(icon.getPath()), null, null);
+				((ImageView) v.findViewById(R.id.image_Face))
+					.setImageDrawable(Drawable.createFromPath(icon.getPath()));
+//					.setCompoundDrawablesWithIntrinsicBounds(null, Drawable.createFromPath(icon.getPath()), null, null);
 //					.setImageURI(uri);
 			} else {
-				((Button) v.findViewById(R.id.image))
-					.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(android.R.drawable.ic_menu_help), null, null);
-//					.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_help));
+				((ImageView) v.findViewById(R.id.image_Face))
+//					.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(android.R.drawable.ic_menu_help), null, null);
+					.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_help));
 			}
-			((Button) v.findViewById(R.id.image))
+			((TextView) v.findViewById(R.id.text_Emoticon))
 				.setText(getEmoticon(position));
-			((Button) v.findViewById(R.id.image))
-				.setTag(emotion);
-			((Button) v.findViewById(R.id.image))
-				.setOnClickListener(new OnClickListener()
+			v.setTag(emotion);
+			v.setOnClickListener(new OnClickListener()
 			{
 				@Override
 				public void onClick(View v)

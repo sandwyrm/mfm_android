@@ -5,10 +5,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.myfacemessenger.android.MFMessenger;
-import com.myfacemessenger.android.R;
-import com.myfacemessenger.android.service.IconUploadService;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -26,11 +22,17 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.myfacemessenger.android.MFMessenger;
+import com.myfacemessenger.android.R;
+import com.myfacemessenger.android.service.IconUploadService;
 
 public class FaceSelectionActivity extends Activity
 {
@@ -51,57 +53,61 @@ public class FaceSelectionActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.face_selection);
 		currentEmote = getIntent().getStringExtra("emote");
-		((TextView) findViewById(R.id.faceSelectionText))
-		.setText("Select your "+currentEmote+" face!");
+		((TextView) findViewById(R.id.text_Header))
+			.setText("Select your \""+currentEmote.replace("_", " ")+"\" face!");
+		((Button) findViewById(R.id.button_Camera))
+			.setOnClickListener(cameraClickListener);
+		((Button) findViewById(R.id.button_Gallery))
+			.setOnClickListener(galleryClickListener);
+		((ImageView) findViewById(R.id.image_Face))
+			.setImageDrawable(Drawable.createFromPath(MFMessenger.getEmoticonFile(currentEmote).getPath()));
 		emoticon_names = getResources().getStringArray(
 			getResources().getIdentifier("emoticon_names", "array", MFMessenger.PACKAGE)
 		);
 		emoticons = getResources().getStringArray(
 			getResources().getIdentifier("emoticons", "array", MFMessenger.PACKAGE)
 		);
-		showDialog(DIALOG_IMAGE_OPTIONS);
+//		showDialog(DIALOG_IMAGE_OPTIONS);
 	}
 
-	@Override
-	protected Dialog onCreateDialog(int id)
+	private void getCameraImage()
 	{
-		switch( id ) {
-			case DIALOG_IMAGE_OPTIONS:
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder
-					.setTitle("Set Face Icon")
-					.setItems(R.array.image_source, sourceListener);
-				return builder.create();
-		}
-		return super.onCreateDialog(id);
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		captureUri = Uri.fromFile(getEmoticonFile(currentEmote));
+		intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, captureUri);
+		try {
+			intent.putExtra("return-data", true);
+			startActivityForResult(intent, PICK_FROM_CAMERA);
+		} catch (ActivityNotFoundException e) {
+			e.printStackTrace();
+        }
 	}
 
-	private android.content.DialogInterface.OnClickListener sourceListener =	//
-		new android.content.DialogInterface.OnClickListener()
+	private void getGalleryImage()
+	{
+		Intent intent = new Intent();
+		intent.setType("image/*");
+		intent.setAction(Intent.ACTION_GET_CONTENT);
+		startActivityForResult(Intent.createChooser(intent, "Complete action using"), PICK_FROM_FILE);
+	}
+
+	private OnClickListener cameraClickListener =	//
+		new OnClickListener()
 	{
 		@Override
-		public void onClick(DialogInterface dialog, int which)
+		public void onClick(View v)
 		{
-			Intent intent = null;
-			switch( which ) {
-				case 0:
-					intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-					captureUri = Uri.fromFile(getEmoticonFile(currentEmote));
-					intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, captureUri);
-					try {
-						intent.putExtra("return-data", true);
-						startActivityForResult(intent, PICK_FROM_CAMERA);
-					} catch (ActivityNotFoundException e) {
-						e.printStackTrace();
-			        }
-					break;
-				case 1:
-					intent = new Intent();
-					intent.setType("image/*");
-					intent.setAction(Intent.ACTION_GET_CONTENT);
-					startActivityForResult(Intent.createChooser(intent, "Complete action using"), PICK_FROM_FILE);
-					break;
-			}
+			getCameraImage();
+		}
+	};
+
+	private OnClickListener galleryClickListener =	//
+		new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			getGalleryImage();
 		}
 	};
 
@@ -158,20 +164,22 @@ public class FaceSelectionActivity extends Activity
 						Bitmap photo = Bitmap.createScaledBitmap(temp, width, height, true);
 						MFMessenger.log("Acquired image data: "+photo.toString());
 						try {
-							FileOutputStream out = new FileOutputStream(new File(captureUri.getPath()));
+							FileOutputStream out = new FileOutputStream(MFMessenger.getEmoticonFile(currentEmote));//new File(captureUri.getPath()));
 							photo.compress(Bitmap.CompressFormat.JPEG, 90, out);
 						} catch( Exception e ) {
 							e.printStackTrace();
 						}
+						Intent intent = new Intent(this, IconUploadService.class);
+						intent.putExtra("file", MFMessenger.getEmoticonFile(currentEmote).getPath());
+//						if( captureUri.getPath().matches(".*external.*") ) {
+//							intent.putExtra("file", currentEmote + ".jpg");
+//						} else {
+//							intent.putExtra("file", captureUri.getPath());
+//						}
+						startService(intent);
+						((ImageView) findViewById(R.id.image_Face))
+							.setImageDrawable(Drawable.createFromPath(MFMessenger.getEmoticonFile(currentEmote).getPath()));
 					}
-					Intent intent = new Intent(this, IconUploadService.class);
-					if( captureUri.getPath().matches(".*external.*") ) {
-						intent.putExtra("file", currentEmote + ".jpg");
-					} else {
-						intent.putExtra("file", captureUri.getPath());
-					}
-					startService(intent);
-					finish();
 					break;
 				default:
 					MFMessenger.log("Unplanned result");
