@@ -1,5 +1,6 @@
 package com.myfacemessenger.android.activity;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.LayoutInflater;
@@ -183,19 +185,6 @@ public class ThreadActivity extends ListActivity
 		@Override
 		public void bindView(View view, Context context, Cursor cursor)
 		{
-//			mutable = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-//			canvas = new Canvas(mutable);
-//			paint = new Paint();
-//			paint.setFilterBitmap(false);
-//
-//			canvas.drawBitmap(bg1, 0, 0, paint);
-//			canvas.drawBitmap(bg2, 0, 0, paint);
-//			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT);
-//			canvas.drawBitmap(mask, 0, 0, paint);
-//			paint.setXfermode(null);
-//
-//			onDrawCanvas.drawBitmap(bitmap, 0, 0, paint);
-			
 			String name = "";
 			String address = cursor.getString(cursor.getColumnIndex("address"));
 			String person = cursor.getString(cursor.getColumnIndex("person"));
@@ -205,25 +194,25 @@ public class ThreadActivity extends ListActivity
 			ImageView icon = (ImageView) view.findViewById(R.id.messageIcon);
 			String emote = MFMessenger.identifyEmote(body);
 			MFMessenger.log("I think you're "+emote);
-			Bitmap photo = null;
+			File photo = null;
 			if( type == 2 ) {
 				name = "Me";
-				photo = BitmapFactory.decodeFile(MFMessenger.getEmoticonFile(emote).getPath());
+				photo = MFMessenger.getEmoticonFile(emote);
 				MFMessenger.log("My Photo: "+photo);
 			} else {
 				name = contactName;
 				photo = MFMessenger.getEmoteIcon(address, emote);
 				MFMessenger.log("Their Photo: "+photo);
+				if( photo == null ) {
+					photo = MFMessenger.getEmoticonFile(emote);
+					MFMessenger.log("My Backup Photo: "+photo);
+				}
 			}
 			if( photo == null ) {
-				photo = BitmapFactory.decodeFile(MFMessenger.getEmoticonFile(emote).getPath());
-				MFMessenger.log("My Backup Photo: "+photo);
-				if( photo == null ) {
-					icon.setImageDrawable(getResources().getDrawable(android.R.drawable.sym_action_chat));
-					MFMessenger.log("Default Photo");
-				}
+				icon.setImageDrawable(getResources().getDrawable(android.R.drawable.sym_action_chat));
+				MFMessenger.log("Default Photo");
 			} else {
-				icon.setImageBitmap(photo);
+				icon.setImageDrawable(Drawable.createFromPath(photo.getPath()));
 			}
 			view.setTag(thread_id);
 			((TextView) view.findViewById(R.id.messageSender))

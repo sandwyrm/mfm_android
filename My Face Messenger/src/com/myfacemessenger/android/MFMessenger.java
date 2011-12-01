@@ -133,19 +133,20 @@ public class MFMessenger extends Application
 		return new File(getIconDirectory(), emotion + ".jpg");
 	}
 
-	public static Bitmap getEmoteIcon(String address, String emote)
+	public static File getEmoteIcon(String address, String emote)
 	{
 		File contactDir = new File(getIconDirectory(), address);
 		if( contactDir.exists() ) {
 			File icon = new File(contactDir, emote + ".jpg");
 			if( icon.exists() ) {
-				InputStream is;
-				try {
-					is = new FileInputStream(icon);
-					return BitmapFactory.decodeStream(is);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
+				return icon;
+//				InputStream is;
+//				try {
+//					is = new FileInputStream(icon);
+//					return BitmapFactory.decodeStream(is);
+//				} catch (FileNotFoundException e) {
+//					e.printStackTrace();
+//				}
 			}
 		}
 		return null;
