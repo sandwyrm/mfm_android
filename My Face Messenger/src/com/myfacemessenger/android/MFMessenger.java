@@ -210,59 +210,8 @@ public class MFMessenger extends Application
 				emote = ":-)";
 			}
 			return emoticonMap.get(emote);
-//			if( emote == ":)" || emote == ":-)" ) {
-//				return "happy";
-//			}
-//			if( emote == ";)" || emote == ";-)" ) {
-//				return "winking";
-//			}
-//			if( emote == ":(" || emote == ":-(" ) {
-//				return "sad";
-//			}
-//			if( emote == ":P" || emote == ":-P" ) {
-//				return "tongue_sticking_out";
-//			}
-//			if( emote == "=O" || emote == "=-O" ) {
-//				return "surprised";
-//			}
-//			if( emote == ":O" || emote == ":-O" ) {
-//				return "yelling";
-//			}
-//			if( emote == ":*" || emote == ":-*" ) {
-//				return "kissing";
-//			}
-//			if( emote == "B)" || emote == "B-)" ) {
-//				return "cool";
-//			}
-//			if( emote == ":$" || emote == ":-$" ) {
-//				return "money_mouth";
-//			}
-//			if( emote == ":[" || emote == ":-[" ) {
-//				return "embarrassed";
-//			}
-//			if( emote == ":!" || emote == ":-!" ) {
-//				return "foot_in_mouth";
-//			}
-//			if( emote == "O:)" || emote == "O:-)" ) {
-//				return "angel";
-//			}
-//			if( emote == ":\\" || emote == ":-\\" ) {
-//				return "undecided";
-//			}
-//			if( emote == ":D" || emote == ":-D" ) {
-//				return "laughing";
-//			}
-//			if( emote == ":\'(" ) {
-//				return "crying";
-//			}
-//			if( emote == ":X" || emote == ":-X" ) {
-//				return "lips_are_sealed";
-//			}
-//			if( emote == "o_O" ) {
-//				return "confused";
-//			}
 		}
-		return "happy";
+		return emote;
 	}
 
 	public static String hash(String source)

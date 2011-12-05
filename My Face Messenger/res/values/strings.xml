@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">My Face Messenger</string>
-    <string name="registration_text">To use My Face Messenger, we need to verify your devices primary phone number.  Please also provide your e-mail address if you would like to receive update notifications and alerts.</string>
+    <string name="registration_text">To use My Face Messenger, we need to verify your devices primary phone number.</string>
+    <string name="registration_email_text">Please also provide your e-mail address if you would like to receive update notifications and alerts.</string>
     <string-array
         name="image_source">
         <item>Capture</item>
