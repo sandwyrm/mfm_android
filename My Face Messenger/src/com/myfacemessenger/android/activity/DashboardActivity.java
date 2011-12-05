@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.myfacemessenger.android.MFMessenger;
 import com.myfacemessenger.android.R;
 import com.myfacemessenger.android.service.IconUploadService;
 
 public class DashboardActivity extends Activity
 {
-
-	/** Called when the activity is first created. */
+	private static final int	REQUEST_CODE_REGISTER	= 0x001;
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -25,46 +25,37 @@ public class DashboardActivity extends Activity
 	protected void onResume()
 	{
 		super.onResume();
-		Intent intent = new Intent(getBaseContext(), ThreadListActivity.class);
-		startActivity(intent);
-//		((Button) findViewById(R.id.getImage))
-//			.setOnClickListener(imageSelectionListener);
-//		((Button) findViewById(R.id.getThreads))
-//			.setOnClickListener(threadListener);
-//		((Button) findViewById(R.id.getSettings))
-//			.setOnClickListener(settingsListener);
+		if( MFMessenger.preferences.getBoolean(MFMessenger.PREF_FIRST_RUN, true) ) {
+			startRegistration();
+		} else {
+			startThreadList();
+		}
 	}
 
-	private OnClickListener imageSelectionListener =	//
-		new OnClickListener()
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		@Override
-		public void onClick(View v)
-		{
-			Intent intent = new Intent(getBaseContext(), FaceManagerActivity.class);
-			startActivity(intent);
+		switch( requestCode ) {
+			case REQUEST_CODE_REGISTER:
+				if( resultCode == RESULT_OK ) {
+					startThreadList();
+				}
+				break;
+			default:
+				finish();
+//				super.onActivityResult(requestCode, resultCode, data);
 		}
-	};
+	}
 
-	private OnClickListener threadListener =	//
-		new OnClickListener()
+	private void startRegistration()
 	{
-		@Override
-		public void onClick(View v)
-		{
-			Intent intent = new Intent(getBaseContext(), ThreadListActivity.class);
-			startActivity(intent);
-		}
-	};
+		Intent intent = new Intent(getBaseContext(), RegistrationActivity.class);
+		startActivityForResult(intent, REQUEST_CODE_REGISTER);
+	}
 
-	private OnClickListener settingsListener =	//
-		new OnClickListener()
+	private void startThreadList()
 	{
-		@Override
-		public void onClick(View v)
-		{
-			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
-			startActivity(intent);
-		}
-	};
+		Intent intent = new Intent(getBaseContext(), ThreadListActivity.class);
+		startActivity(intent);
+	}
 }

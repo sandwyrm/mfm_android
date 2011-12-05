@@ -21,8 +21,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -32,10 +34,10 @@ public class MFMessenger extends Application
 	public static final String		UPDATE_ACTION	= PACKAGE + ".ACTION_NEW_MESSAGE";
 	public static final String		LOG_TAG			= PACKAGE + ".log";
 	public static final String		ACTION_UPDATE	= PACKAGE + ".UPDATE_ACTION";
+	public static final String		PREF_DEVICE_ID	= PACKAGE + ".IDENTITY";
+	public static final String		PREF_FIRST_RUN	= PACKAGE + ".FIRST_RUN";
 	public static SharedPreferences	preferences		= null;
 
-	private String					PREF_DEVICE_ID	= PACKAGE + ".IDENTITY";
-	private String					PREF_FIRST_RUN	= PACKAGE + ".FIRST_RUN";
 
 	private static final String		ICON_DIRECTORY	= "MyFaceMessenger";
 
@@ -43,24 +45,21 @@ public class MFMessenger extends Application
 	public void onCreate()
 	{
 		super.onCreate();
-		preferences = getSharedPreferences(getApplicationContext().getPackageName() + "_preferences", Context.MODE_PRIVATE);
+		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 	}
 
-	private String getDevicePhoneId()
+	public static String getDevicePhoneId(Context context)
 	{
 		String id = preferences.getString(PREF_DEVICE_ID, null);
 		if( id != null ) {
 			return id;
 		}
-		TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 		if( id == null ) {
 			id = manager.getLine1Number();
 		}
 		if( id == null ) {
 			id = manager.getVoiceMailNumber();
-		}
-		if( id == null ) {
-			id = UUID.randomUUID().toString();
 		}
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putString(PREF_DEVICE_ID, id);

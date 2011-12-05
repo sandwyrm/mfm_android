@@ -11,42 +11,118 @@
     </string-array>
     <string-array
         name="emoticons">
+        <item>:)</item>
         <item>:-)</item>
+        <item>:o)</item>
+        <item>;)</item>
         <item>;-)</item>
+        <item>;o)</item>
+        <item>:(</item>
         <item>:-(</item>
+        <item>:o(</item>
+        <item>:P</item>
         <item>:-P</item>
+        <item>:oP</item>
+        <item>=O</item>
         <item>=-O</item>
+        <item>=oO</item>
+        <item>=0</item>
+        <item>=-0</item>
+        <item>=o0</item>
         <item>:0</item>
+        <item>:-0</item>
+        <item>:o0</item>
+        <item>:O</item>
+        <item>:-O</item>
+        <item>:oO</item>
+        <item>:*</item>
         <item>:-*</item>
+        <item>:o*</item>
+        <item>B)</item>
         <item>B-)</item>
+        <item>Bo)</item>
+        <item>:$</item>
         <item>:-$</item>
+        <item>:o$</item>
+        <item>:[</item>
         <item>:-[</item>
+        <item>:o[</item>
+        <item>:!</item>
         <item>:-!</item>
+        <item>:o!</item>
+        <item>O:)</item>
         <item>O:-)</item>
+        <item>O:o)</item>
+        <item>:\</item>
         <item>:-\</item>
+        <item>:o\</item>
+        <item>:D</item>
         <item>:-D</item>
+        <item>:oD</item>
         <item>:\'(</item>
+        <item>:\'-(</item>
+        <item>:\'o(</item>
+        <item>:X</item>
         <item>:-X</item>
+        <item>:oX</item>
         <item>o_O</item>
         <item>(current)</item>
     </string-array>
     <string-array
         name="emoticon_names">
         <item>happy</item>
+        <item>happy</item>
+        <item>happy</item>
+        <item>winking</item>
+        <item>winking</item>
         <item>winking</item>
         <item>sad</item>
+        <item>sad</item>
+        <item>sad</item>
+        <item>tongue_sticking_out</item>
+        <item>tongue_sticking_out</item>
         <item>tongue_sticking_out</item>
         <item>surprised</item>
+        <item>surprised</item>
+        <item>surprised</item>
+        <item>surprised</item>
+        <item>surprised</item>
+        <item>surprised</item>
+        <item>yelling</item>
+        <item>yelling</item>
+        <item>yelling</item>
+        <item>yelling</item>
+        <item>yelling</item>
         <item>yelling</item>
         <item>kissing</item>
+        <item>kissing</item>
+        <item>kissing</item>
+        <item>cool</item>
+        <item>cool</item>
         <item>cool</item>
         <item>money_mouth</item>
+        <item>money_mouth</item>
+        <item>money_mouth</item>
+        <item>embarrassed</item>
+        <item>embarrassed</item>
         <item>embarrassed</item>
         <item>foot_in_mouth</item>
+        <item>foot_in_mouth</item>
+        <item>foot_in_mouth</item>
+        <item>angel</item>
+        <item>angel</item>
         <item>angel</item>
         <item>undecided</item>
+        <item>undecided</item>
+        <item>undecided</item>
+        <item>laughing</item>
+        <item>laughing</item>
         <item>laughing</item>
         <item>crying</item>
+        <item>crying</item>
+        <item>crying</item>
+        <item>lips_are_sealed</item>
+        <item>lips_are_sealed</item>
         <item>lips_are_sealed</item>
         <item>confused</item>
         <item>current</item>
