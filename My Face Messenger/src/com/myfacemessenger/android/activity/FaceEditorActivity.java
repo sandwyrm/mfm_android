@@ -34,7 +34,7 @@ import com.myfacemessenger.android.MFMessenger;
 import com.myfacemessenger.android.R;
 import com.myfacemessenger.android.service.IconUploadService;
 
-public class FaceSelectionActivity extends Activity
+public class FaceEditorActivity extends Activity
 {
 	private static final String	ICON_DIRECTORY			= "MyFaceMessenger";
 	private static final int	DIALOG_IMAGE_OPTIONS	= 100;

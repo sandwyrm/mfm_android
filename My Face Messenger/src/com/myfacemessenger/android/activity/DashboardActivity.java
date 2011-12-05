@@ -41,7 +41,7 @@ public class DashboardActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			Intent intent = new Intent(getBaseContext(), FaceIconManagerActivity.class);
+			Intent intent = new Intent(getBaseContext(), FaceManagerActivity.class);
 			startActivity(intent);
 		}
 	};

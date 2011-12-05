@@ -1,8 +1,8 @@
 package com.myfacemessenger.android.activity;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -37,11 +36,12 @@ import custom.android.provider.Telephony.Sms;
 
 public class ThreadActivity extends ListActivity
 {
-	private String thread_id;
-	private String address;
-	private String contactName;
-	private SmsThreadAdapter adapter;
-	private UpdateReceiver receiver;
+	private HashMap<String,String> emoticonMap;
+	private String				thread_id;
+	private String				address;
+	private String				contactName;
+	private SmsThreadAdapter	adapter;
+	private UpdateReceiver		receiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -50,13 +50,14 @@ public class ThreadActivity extends ListActivity
 		setContentView(R.layout.thread);
 		thread_id = getIntent().getStringExtra("thread_id");
 		address = getIntent().getStringExtra("address");
-		((Button) findViewById(R.id.sendButton))
+		((Button) findViewById(R.id.button_Send))
 			.setOnClickListener(sendListener);
 		Bitmap photo = MFMessenger.getContactPhoto(getContentResolver(), address);
 		if( photo != null ) {
 			((ImageView) findViewById(R.id.threadIcon))
 				.setImageBitmap(photo);
 		}
+		emoticonMap = loadHashMap(R.array.emoticons, R.array.emoticon_names);
 		contactName = MFMessenger.getContactName(getContentResolver(), address);
 		((TextView) findViewById(R.id.threadContactName))
 			.setText(contactName);
@@ -68,6 +69,17 @@ public class ThreadActivity extends ListActivity
         	.setStackFromBottom(true);
         getListView()
         	.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+	}
+
+	private HashMap<String,String> loadHashMap(int keyResourceId, int valueResourceId)
+	{
+		String[] keyValues = getResources().getStringArray(keyResourceId);
+		String[] valuesData = getResources().getStringArray(valueResourceId);
+		HashMap<String,String> map = new HashMap<String, String>();
+		for( int i=0; i<keyValues.length; i++ ) {
+			map.put(keyValues[i], valuesData[i]);
+		}
+		return map;
 	}
 
 	@Override
@@ -104,7 +116,7 @@ public class ThreadActivity extends ListActivity
 				startActivity(intent);
 				return true;
 			case R.id.faces:
-				intent = new Intent(this, FaceIconManagerActivity.class);
+				intent = new Intent(this, FaceManagerActivity.class);
 				startActivity(intent);
 				return true;
 			default:
@@ -114,7 +126,7 @@ public class ThreadActivity extends ListActivity
 
 	private void sendMessage()
 	{
-		EditText input = (EditText) findViewById(R.id.sendText);
+		EditText input = (EditText) findViewById(R.id.input_MessageInput);
 		SmsManager manager = SmsManager.getDefault();
 		manager.sendTextMessage(address, null, input.getText().toString(), null, null);
 		ContentValues cv = new ContentValues();
@@ -192,32 +204,34 @@ public class ThreadActivity extends ListActivity
 			long date = cursor.getLong(cursor.getColumnIndex("date"));
 			int type = cursor.getInt(cursor.getColumnIndex("type"));
 			ImageView icon = (ImageView) view.findViewById(R.id.messageIcon);
-			String emote = MFMessenger.identifyEmote(body);
-			MFMessenger.log("I think you're "+emote);
-			File photo = null;
+			String emote = MFMessenger.identifyEmote(getBaseContext(), body);
+			MFMessenger.log("I think you're "+emote.replace("_", " "));
+			icon.setImageDrawable(Drawable.createFromPath(MFMessenger.getEmoticonFile(emote).getPath()));
+//			File photo = null;
 			if( type == 2 ) {
-				name = "Me";
-				photo = MFMessenger.getEmoticonFile(emote);
-				MFMessenger.log("My Photo: "+photo);
+				name = "Me ("+emote+")";
+//				photo = MFMessenger.getEmoticonFile(emote);
+//				MFMessenger.log("My Photo: "+photo);
 			} else {
-				name = contactName;
-				photo = MFMessenger.getEmoteIcon(address, emote);
-				MFMessenger.log("Their Photo: "+photo);
-				if( photo == null ) {
-					photo = MFMessenger.getEmoticonFile(emote);
-					MFMessenger.log("My Backup Photo: "+photo);
-				}
+				name = contactName+" ("+emote+")";
+//				photo = MFMessenger.getEmoteIcon(address, emote);
+//				MFMessenger.log("Their Photo: "+photo);
+//				if( photo == null ) {
+//					photo = MFMessenger.getEmoticonFile(emote);
+//					MFMessenger.log("My Backup Photo: "+photo);
+//				}
 			}
-			if( photo == null ) {
-				icon.setImageDrawable(getResources().getDrawable(android.R.drawable.sym_action_chat));
-				MFMessenger.log("Default Photo");
-			} else {
-				icon.setImageDrawable(Drawable.createFromPath(photo.getPath()));
-			}
+//			if( photo == null ) {
+//				icon.setImageDrawable(getResources().getDrawable(android.R.drawable.sym_action_chat));
+//				MFMessenger.log("Default Photo");
+//			} else {
+//				icon.setImageDrawable(Drawable.createFromPath(photo.getPath()));
+//			}
 			view.setTag(thread_id);
 			((TextView) view.findViewById(R.id.messageSender))
 				.setText(name);
 			((TextView) view.findViewById(R.id.messageBody))
+//				.loadData(body, "text/plain", "UTF-8");
 				.setText(body);
 			((TextView) view.findViewById(R.id.messageTime))
 				.setText("SENT "+dateFormat.format(new Date(date)));

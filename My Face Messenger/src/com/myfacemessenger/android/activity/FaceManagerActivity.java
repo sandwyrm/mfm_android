@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.myfacemessenger.android.MFMessenger;
 import com.myfacemessenger.android.R;
 
-public class FaceIconManagerActivity extends Activity
+public class FaceManagerActivity extends Activity
 {
 	private static final String	ICON_DIRECTORY			= "MyFaceMessenger";
 
@@ -126,7 +126,7 @@ public class FaceIconManagerActivity extends Activity
 				@Override
 				public void onClick(View v)
 				{
-					Intent intent = new Intent(getBaseContext(), FaceSelectionActivity.class);
+					Intent intent = new Intent(getBaseContext(), FaceEditorActivity.class);
 					intent.putExtra("emote", String.valueOf(v.getTag()));
 					startActivity(intent);
 //					showDialog(DIALOG_IMAGE_OPTIONS);

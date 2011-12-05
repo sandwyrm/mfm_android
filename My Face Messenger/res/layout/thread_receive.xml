@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:paddingBottom="5dp"
     android:paddingLeft="12dp"
-    android:paddingRight="12dp"
-    android:background="#FFFFFF" >
+    android:paddingRight="12dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/receive_background"
+        android:paddingBottom="7.5dp"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
-        android:paddingTop="7.5dp"
-        android:paddingBottom="7.5dp" >
+        android:paddingTop="7.5dp" >
 
         <ImageView
             android:id="@+id/messageIcon"
@@ -25,23 +25,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:paddingLeft="12dp" >
 
             <TextView
                 android:id="@+id/messageSender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ardie Yorgans"
-                android:textSize="12dp"
-                android:textColor="#cccccc" />
+                android:textColor="#cccccc"
+                android:textSize="12dp" />
 
             <TextView
                 android:id="@+id/messageBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
                 android:paddingBottom="5dp"
+                android:paddingTop="5dp"
                 android:text="Lorem ipsum dolor sit amet, consecteur adipiso eros elementum commodo.  Donec quis nunc la sparta!"
                 android:textColor="#ffffff" />
 
@@ -50,11 +50,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="SENT 4:20 PM, NOV 12"
-                android:textSize="12dp"
-                android:textColor="#cccccc" />
-
+                android:textColor="#cccccc"
+                android:textSize="12dp" />
         </LinearLayout>
-        
     </LinearLayout>
 
 </LinearLayout>

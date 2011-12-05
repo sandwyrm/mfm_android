@@ -36,10 +36,11 @@
         </activity>
         <activity
             android:label="Face Manager"
-            android:name=".activity.FaceIconManagerActivity" />
+            android:name=".activity.FaceManagerActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:label="Face Selection"
-            android:name=".activity.FaceSelectionActivity" />
+            android:name=".activity.FaceEditorActivity" />
         <activity
             android:label="Conversations"
             android:name=".activity.ThreadListActivity" />

@@ -2,17 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/faces_background" >
+    android:background="#66333333"
+    android:orientation="vertical"
+    android:padding="20dp" >
 
-    <GridView
-        android:id="@+id/iconGrid"
-        android:gravity="center"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="100dp"
-        android:horizontalSpacing="1dp"
-        android:verticalSpacing="1dp"
-        android:numColumns="3" >
-    </GridView>
+        android:background="@drawable/faces_background"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Select Face"
+                android:textColor="@android:color/primary_text_light" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <GridView
+                android:id="@+id/iconGrid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:columnWidth="80dp"
+                android:gravity="center"
+                android:horizontalSpacing="1dp"
+                android:numColumns="3"
+                android:verticalSpacing="2dp" >
+            </GridView>
+        </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>

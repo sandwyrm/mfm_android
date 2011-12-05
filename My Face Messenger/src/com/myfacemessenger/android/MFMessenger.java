@@ -1,12 +1,11 @@
 package com.myfacemessenger.android;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -26,8 +25,6 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
-import com.myfacemessenger.android.api.APIHandler;
 
 public class MFMessenger extends Application
 {
@@ -152,9 +149,22 @@ public class MFMessenger extends Application
 		return null;
 	}
 
-	public static String identifyEmote(String emote)
+	private static HashMap<String,String> loadEmoticonMap(Context context)
 	{
-		if( emote != null ) {
+		String[] keyValues = context.getResources().getStringArray(R.array.emoticons);
+		String[] valuesData = context.getResources().getStringArray(R.array.emoticon_names);
+		HashMap<String,String> map = new HashMap<String, String>();
+		for( int i=0; i<keyValues.length; i++ ) {
+			map.put(keyValues[i], valuesData[i]);
+		}
+		return map;
+	}
+
+	public static String identifyEmote(Context context, String source)
+	{
+		String emote = "happy";
+		if( source != null ) {
+			HashMap<String,String> emoticonMap = loadEmoticonMap(context);
 			Pattern p = Pattern.compile(
 				"(?:" +
 				":[-o]?\\)" +
@@ -192,67 +202,65 @@ public class MFMessenger extends Application
 				"o_O" +
 				")"
 			);
-			Matcher m = p.matcher(emote);
+			Matcher m = p.matcher(source);
 			if( m.find() ) {
 				MatchResult mr = m.toMatchResult();
-				String output = "";
-				output = mr.group(0);
-				return output;
-//				emote = mr.group(0);
+				emote = mr.group(0);
 			} else {
 				emote = ":-)";
 			}
-			if( emote == ":)" || emote == ":-)" ) {
-				return "happy";
-			}
-			if( emote == ";)" || emote == ";-)" ) {
-				return "winking";
-			}
-			if( emote == ":(" || emote == ":-(" ) {
-				return "sad";
-			}
-			if( emote == ":P" || emote == ":-P" ) {
-				return "tongue_sticking_out";
-			}
-			if( emote == "=O" || emote == "=-O" ) {
-				return "surprised";
-			}
-			if( emote == ":O" || emote == ":-O" ) {
-				return "yelling";
-			}
-			if( emote == ":*" || emote == ":-*" ) {
-				return "kissing";
-			}
-			if( emote == "B)" || emote == "B-)" ) {
-				return "cool";
-			}
-			if( emote == ":$" || emote == ":-$" ) {
-				return "money_mouth";
-			}
-			if( emote == ":[" || emote == ":-[" ) {
-				return "embarrassed";
-			}
-			if( emote == ":!" || emote == ":-!" ) {
-				return "foot_in_mouth";
-			}
-			if( emote == "O:)" || emote == "O:-)" ) {
-				return "angel";
-			}
-			if( emote == ":\\" || emote == ":-\\" ) {
-				return "undecided";
-			}
-			if( emote == ":D" || emote == ":-D" ) {
-				return "laughing";
-			}
-			if( emote == ":\'(" ) {
-				return "crying";
-			}
-			if( emote == ":X" || emote == ":-X" ) {
-				return "lips_are_sealed";
-			}
-			if( emote == "o_O" ) {
-				return "confused";
-			}
+			return emoticonMap.get(emote);
+//			if( emote == ":)" || emote == ":-)" ) {
+//				return "happy";
+//			}
+//			if( emote == ";)" || emote == ";-)" ) {
+//				return "winking";
+//			}
+//			if( emote == ":(" || emote == ":-(" ) {
+//				return "sad";
+//			}
+//			if( emote == ":P" || emote == ":-P" ) {
+//				return "tongue_sticking_out";
+//			}
+//			if( emote == "=O" || emote == "=-O" ) {
+//				return "surprised";
+//			}
+//			if( emote == ":O" || emote == ":-O" ) {
+//				return "yelling";
+//			}
+//			if( emote == ":*" || emote == ":-*" ) {
+//				return "kissing";
+//			}
+//			if( emote == "B)" || emote == "B-)" ) {
+//				return "cool";
+//			}
+//			if( emote == ":$" || emote == ":-$" ) {
+//				return "money_mouth";
+//			}
+//			if( emote == ":[" || emote == ":-[" ) {
+//				return "embarrassed";
+//			}
+//			if( emote == ":!" || emote == ":-!" ) {
+//				return "foot_in_mouth";
+//			}
+//			if( emote == "O:)" || emote == "O:-)" ) {
+//				return "angel";
+//			}
+//			if( emote == ":\\" || emote == ":-\\" ) {
+//				return "undecided";
+//			}
+//			if( emote == ":D" || emote == ":-D" ) {
+//				return "laughing";
+//			}
+//			if( emote == ":\'(" ) {
+//				return "crying";
+//			}
+//			if( emote == ":X" || emote == ":-X" ) {
+//				return "lips_are_sealed";
+//			}
+//			if( emote == "o_O" ) {
+//				return "confused";
+//			}
 		}
 		return "happy";
 	}

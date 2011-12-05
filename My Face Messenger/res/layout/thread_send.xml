@@ -34,10 +34,10 @@
                 android:id="@+id/messageBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
                 android:paddingBottom="5dp"
+                android:paddingTop="5dp"
                 android:text="Lorem ipsum dolor sit amet, consecteur adipiso eros elementum commodo.  Donec quis nunc la sparta!"
-                android:textColor="#ffffff"/>
+                android:textColor="#ffffff" />
 
             <TextView
                 android:id="@+id/messageTime"
